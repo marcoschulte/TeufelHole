@@ -1,0 +1,17 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+# forward multicast between listed devices
+{% for item in devices|product(controllers)|list %}
+-A FORWARD -d 224.0.0.0/4 -s {{ item[0] }} -j TEE --gateway {{ item[1] }}
+-A FORWARD -d 224.0.0.0/4 -s {{ item[1] }} -j TEE --gateway {{ item[0] }}
+
+{% endfor %}
+
+# block multicast
+-A FORWARD -d 224.0.0.0/4 -j DROP
+
+COMMIT
+# must end with newline

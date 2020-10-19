@@ -1,0 +1,16 @@
+- debug: 
+    msg: "Device {{ item[0] }} with controller {{ item[1] }}"
+  loop: "{{ devices |product(controllers)|list }}"
+
+- name: Add iptables rules
+  template:
+    src: "{{ item }}"
+    dest: /etc/iptables/
+  with_items:
+    - rules.v4
+    - rules.v6
+
+- name: install iptables-persistent
+  apt:
+      name: iptables-persistent
+      state: present

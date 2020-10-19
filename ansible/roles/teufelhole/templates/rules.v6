@@ -1,0 +1,10 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+# block multicast
+-A FORWARD -d ff02::fb/128 -j DROP
+
+COMMIT
+# must end with newline

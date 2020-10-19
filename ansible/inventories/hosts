@@ -1,0 +1,1 @@
+192.168.178.30 ansible_user=pi ansible_become=yes

@@ -1,0 +1,10 @@
+[Unit]
+Description=My Script Service
+After=multi-user.target
+ 
+[Service]
+Type=idle
+ExecStart=/sbin/iw dev wlan0 set power_save off
+ 
+[Install]
+WantedBy=multi-user.target

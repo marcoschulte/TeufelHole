@@ -1,0 +1,74 @@
+- name: install hostapd
+  apt:
+      name: hostapd
+      state: present
+      update_cache: yes
+
+- name: Unmask hostapd
+  raw: systemctl unmask hostapd
+
+- name: Enable hostapd
+  raw: systemctl enable hostapd
+
+- name: add bridge-br0.netdev
+  copy:
+    src: bridge-br0.netdev
+    dest: /etc/systemd/network/bridge-br0.netdev
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: add br0-member-eth0.network
+  copy:
+    src: br0-member-eth0.network
+    dest: /etc/systemd/network/br0-member-eth0.network
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable systemd-networkd
+  raw: systemctl enable systemd-networkd
+
+- name: Disable DHCP for wlan0, eth0
+  lineinfile:
+    path: /etc/dhcpcd.conf
+    regexp: '^denyinterfaces'
+    line: denyinterfaces wlan0 eth0
+
+- name: Enable DHCP for br0
+  lineinfile:
+    path: /etc/dhcpcd.conf
+    regexp: '^interface'
+    line: interface br0
+
+- name: add hostapd.conf
+  template:
+    src: hostapd.conf
+    dest: /etc/hostapd/hostapd.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Unblock wifi radio
+  raw: rfkill unblock wlan
+
+- name: Disable wifi power saving
+  copy:
+    src: powersaveoff.service
+    dest: /lib/systemd/system/powersaveoff.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- raw: systemctl enable powersaveoff.service
+
+- name : Load br_netfilter kernel module on boot
+  copy:
+    src: br_netfilter.conf
+    dest: /etc/modules-load.d/br_netfilter.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+#- name: Reboot
+#  reboot:

@@ -1,0 +1,23 @@
+- name: Add ssh key
+  authorized_key:
+    user: pi
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+- name: Disable password login (ChallengeResponseAuthentication)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ChallengeResponseAuthentication'
+    line: ChallengeResponseAuthentication no
+
+- name: Disable password login (PasswordAuthentication)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: PasswordAuthentication no
+
+- name: Disable password login (UsePAM)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^UsePAM'
+    line: UsePAM no
