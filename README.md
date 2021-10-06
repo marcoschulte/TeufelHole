@@ -21,3 +21,13 @@ Enter raspberry pi IP into `ansible/inventories/hosts`.
 Run ansible playbook
 
     ansible-playbook -i inventories/hosts teufelhole-playbook.yml 
+
+# Running docker on pi
+
+Docker will set the default policy for the iptables forward chain to drop. Therefore temporarily we can change the default policy back to ACCEPT
+
+    sudo iptables -P FORWARD ACCEPT
+
+Unfortunately this is not persistent. To be fixed after restarts, add following as last rule before `COMMIT` to `/etc/iptables/rules.v4`
+
+    -A FORWARD -j ACCEPT
